@@ -1,0 +1,32 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "123",
+    "database": "el-brillante",
+    "host": "localhost",
+    "dialect": "mysql",
+    "logging": false,
+    "path_to_photos": "/home",
+    "TOKEN_SECRET": "DUMMY_SECRET"
+  },
+  "test": {
+    "username": "admin",
+    "password": "123",
+    "database": "el-brillante",
+    "host": "localhost",
+    "dialect": "mysql",
+    "logging": true,
+    "path_to_photos": "/home",
+    "TOKEN_SECRET": "DUMMY_SECRET"
+  },
+  "production": {
+    "username": "admin",
+    "password": "123",
+    "database": "el-brillante",
+    "host": "localhost",
+    "dialect": "mysql",
+    "logging": false,
+    "path_to_photos": "/home",
+    "TOKEN_SECRET": "DUMMY_SECRET"
+  }
+}
