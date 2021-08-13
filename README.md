@@ -25,6 +25,12 @@ and several others of your choice. Read Sequelize documentation for more informa
 **Note:** You don't need to modify your database schema, the application is responsible
 of creating everithing from scratch. You should provide an empty database.
 
+## Test
+In order to populate the database with some initial information, please run the following
+command:
+
+`npx sequelize-cli db:seed:all`
+
 ## Run
 
 To run the application you can use:
