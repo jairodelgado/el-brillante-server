@@ -8,6 +8,6 @@ module.exports = (models) => {
           .create()
           .update()
           .delete()
-          .filterBy(by = ['MaterialId'])
+          .filterBy({by: ['MaterialId']})
           .produce()
 }

@@ -1,5 +1,16 @@
 const { DataTypes, Model } = require('sequelize');
 
+async function calculateMinimumDiscount(item) {
+  const materials = await item.getMaterials();
+  var total = 0;
+
+  for(var i = 0; i < materials.length; i++) {
+    total += materials[i].ItemMaterial.compositionPercent * materials[i].currentPrice / 100;
+  }
+
+  return total;
+}
+
 module.exports = (connection) => {
   class Item extends Model {
     static associate(models) {
@@ -12,14 +23,23 @@ module.exports = (connection) => {
       models.Item.hasMany(models.ItemBalance);
       models.ItemBalance.belongsTo(models.Item);
 
-      /* Item many-to-many Material */
-      models.Item.belongsToMany(models.Material, {
-        through: models.ItemMaterial
+      /* Item one-to-many ItemMaterial */
+      models.Item.hasMany(models.ItemMaterial);
+      models.ItemMaterial.belongsTo(models.Item, {
+        foreignKey: {
+          allowNull: false
+        }
       });
 
-      /* Item many-to-many Product */
-      models.Item.belongsToMany(models.Product, {
-        through: 'ItemProduct'
+      models.Item.belongsToMany(models.Material, { through: models.ItemMaterial });
+      models.Material.belongsToMany(models.Item, { through: models.ItemMaterial });
+
+      /* Item one-to-many ItemProduct */
+      models.Item.hasMany(models.ItemProduct);
+      models.ItemProduct.belongsTo(models.Item, {
+        foreignKey: {
+          allowNull: false
+        }
       });
     }
   }
@@ -31,7 +51,7 @@ module.exports = (connection) => {
       autoIncrement: true
     },
     number: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
     },
     uom: {
       type: DataTypes.STRING,
@@ -101,10 +121,35 @@ module.exports = (connection) => {
     },
     active: {
       type: DataTypes.BOOLEAN
-    }
+    },
+    minimumDiscount: {
+      type: DataTypes.VIRTUAL
+    },
+    salesPrice: {
+      type: DataTypes.FLOAT
+    },
+    retailPrice: {
+      type: DataTypes.FLOAT
+    },
   }, {
     sequelize: connection,
-    modelName: 'Item'
+    modelName: 'Item',
+    hooks: {
+      afterCreate: (item, options) => {
+        return item.update({ number: item.id.toString().padStart(8, 0) })
+      },
+      afterFind: async function(items) {
+        if(items.constructor === Array) {
+          for (var i = 0; i < items.length; i++) {
+            items[i].minimumDiscount = await calculateMinimumDiscount(items[i]);
+          }
+        } else {
+            items.minimumDiscount = await calculateMinimumDiscount(items);
+        }
+
+        return items;
+      }
+    }
   });
 
   return Item;

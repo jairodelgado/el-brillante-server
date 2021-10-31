@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+var express = require('express');
 
 module.exports = (app, models) => {
 	fs
@@ -13,10 +14,6 @@ module.exports = (app, models) => {
 
 	    app.use('/api', router);
 	  });
-
-	app.use((req, res) => {
-		res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
-	});
 
 	return app;
 }

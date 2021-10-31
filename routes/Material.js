@@ -8,8 +8,8 @@ module.exports = (models) => {
           .create()
           .update()
           .delete()
-          .filterByFrom(by = ['ItemId'], from = models.Item, routeName = '/filter-by-item/', what = (item) => {
+          .filterByFrom({by: ['ItemId'], from: models.Item, routeName: '/filter-by-item/', what: (item) => {
             return item.getMaterials();
-          })
+          }})
           .produce()
 }

@@ -10,13 +10,18 @@ class Builder {
     this.middlewares = middlewares
   }
 
-  list(routeName = '/', middlewares = [], handler = null) {
+  list({routeName = '/', add = [], middlewares = [], handler = null, filter=false} = {}) {
     if (handler) {
       this.router.route(this.baseName + routeName).get(compose(this.middlewares.concat(middlewares)), handler)
     } else {
       this.router.route(this.baseName + routeName).get(compose(this.middlewares.concat(middlewares)), (req, res) => {
-        this.model.findAll()
+        this.model.findAll({
+           include: add
+        })
         .then((modelList) => {
+          if (filter) {
+            modelList = modelList.map(filter);
+          }
           res.json(modelList);
         })
         .catch((exception) => {
@@ -28,7 +33,7 @@ class Builder {
     return this;
   }
 
-  filterBy(by, routeName = '/filter/', error_msg = 'Unknown params provided', middlewares = [], handler = null) {
+  filterBy({by, add = [], routeName = '/filter/', error_msg = 'Unknown params provided', middlewares = [], handler = null, filter=false} = {}) {
     let route = this.baseName + routeName
 
     for(const property of by) {
@@ -46,13 +51,18 @@ class Builder {
         }
 
         this.model.findAll({
-          where: where
+          where: where,
+          include: add
         })
-        .then((model) => {
-          return model || Promise.reject( new Error(error_msg) );
+        .then((modelList) => {
+          return modelList || Promise.reject( new Error(error_msg) );
         })
-        .then((model) => {
-          res.json(model);
+        .then((modelList) => {
+          if (filter) {
+            modelList = modelList.map(filter);
+          }
+
+          res.json(modelList);
         })
         .catch((exception) => {
           res.status(400).json({message: exception.message});
@@ -63,7 +73,7 @@ class Builder {
     return this;
   }
 
-  filterByFrom(by, from, what, routeName = '/filter-from/', error_msg = 'Unknown params provided', middlewares = [], handler = null) {
+  filterByFrom({by, from, what, routeName = '/filter-from/', error_msg = 'Unknown params provided', middlewares = [], include=[], handler = null, filter=false} = {}) {
     let route = this.baseName + routeName
 
     for(const property of by) {
@@ -81,17 +91,21 @@ class Builder {
         }
         
         this.from.findAll({
-          where: where
+          where: where,
+          include: include
         })
-        .then((model) => {
-          if (model) {
-            return what(model)
+        .then((modelList) => {
+          if (modelList) {
+            return what(modelList)
           } else{
             Promise.reject(new Error(error_msg));
           }
         })
-        .then((model) => {
-          res.json(model);
+        .then((modelList) => {
+          if (filter) {
+            modelList = modelList.map(filter);
+          }
+          res.json(modelList);
         })
         .catch((exception) => {
           res.status(400).json({message: exception.message});
@@ -102,12 +116,18 @@ class Builder {
     return this;
   }
 
-  create(routeName = '/', middlewares = [], handler = null) {
+  create({routeName = '/', middlewares = [], handler = null, filter=false} = {}) {
     if (handler) {
       this.router.route(this.baseName + routeName).post(compose(this.middlewares.concat(middlewares)), handler)
     } else {
       this.router.route(this.baseName + routeName).post(compose(this.middlewares.concat(middlewares)), (req, res) => {
-        this.model.create(req.body)
+        let data = req.body;
+
+        if (filter) {
+          data = filter(req.body);
+        }
+
+        this.model.create(data)
         .then((model) => {
             res.json(model);
           })
@@ -120,16 +140,21 @@ class Builder {
     return this;
   }
 
-  retreive(routeName = '/details/:id', error_msg = 'Unknown id provided', middlewares = [], handler = null) {
+  retreive({add = [], routeName = '/details/:id', error_msg = 'Unknown id provided', middlewares = [], handler = null, filter=false} = {}) {
     if (handler) {
       this.router.route(this.baseName + routeName).get(compose(this.middlewares.concat(middlewares)), handler)
     } else {
       this.router.route(this.baseName + routeName).get(compose(this.middlewares.concat(middlewares)), (req, res) => {
-        this.model.findByPk(req.params.id)
+        this.model.findByPk(req.params.id, {
+          include: add
+        })
           .then((model) => {
             return model || Promise.reject( new Error(error_msg) );
           })
           .then((model) => {
+            if (filter) {
+              model = filter(model);
+            }
             res.json(model);
           })
           .catch((exception) => {
@@ -141,7 +166,7 @@ class Builder {
     return this;
   }
 
-  update(routeName = '/details/:id', error_msg = 'Unknown id provided', middlewares = [], handler = null) {
+  update({routeName = '/details/:id', error_msg = 'Unknown id provided', middlewares = [], handler = null, filter=false} = {}) {
     if (handler) {
       this.router.route(this.baseName + routeName).put(compose(this.middlewares.concat(middlewares)), handler)
     } else {
@@ -151,7 +176,12 @@ class Builder {
             return model || Promise.reject( new Error(error_msg) );
           })
           .then((model) => {
-            return model.update(req.body);
+            let data = req.body;
+            
+            if (filter) {
+              data = filter(req.body);
+            }
+            return model.update(data);
           })
           .then((model) => {
             res.json(model);
@@ -165,7 +195,7 @@ class Builder {
     return this;
   }
 
-  delete(routeName = '/details/:id', error_msg = 'Unknown id provided', middlewares = [], handler = null) {
+  delete({routeName = '/details/:id', error_msg = 'Unknown id provided', middlewares = [], handler = null} = {}) {
     if (handler) {
       this.router.route(this.baseName + routeName).delete(compose(this.middlewares.concat(middlewares)), handler)
     } else {

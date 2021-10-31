@@ -32,12 +32,6 @@ module.exports = (connection) => {
     },
     active: {
       type: DataTypes.BOOLEAN
-    },
-    ItemId: {
-      type: DataTypes.INTEGER
-    },
-    StoreId: {
-      type: DataTypes.INTEGER
     }
   }, {
     sequelize: connection,

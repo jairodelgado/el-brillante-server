@@ -8,8 +8,8 @@ module.exports = (models) => {
           .create()
           .update()
           .delete()
-          .filterByFrom(by = ['ProductId'], from = models.Product, routeName = '/filter-by-product/', what = (product) => {
+          .filterByFrom({ by: ['ProductId'], from: models.Product, routeName: '/filter-by-product/', what: (product) => {
             return product.getTags();
-          })
+          }})
           .produce()
 }

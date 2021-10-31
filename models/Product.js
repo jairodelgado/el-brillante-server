@@ -1,23 +1,61 @@
 const { DataTypes, Model } = require('sequelize');
 
+async function calculateVirtualsFromItems(product) {
+  const items = await product.getItems();
+  var weight = 0;
+  var minimumDiscount = 0;
+  var salesPrice = 0;
+  var retailPrice = 0;
+
+  for(var i = 0; i < items.length; i++) {
+    weight += items[i].weight;
+    minimumDiscount += items[i].minimumDiscount;
+    salesPrice += items[i].salesPrice;
+    retailPrice += items[i].retailPrice;
+  }
+  
+  return {
+    weight: weight,
+    minimumDiscount: minimumDiscount,
+    salesPrice: salesPrice,
+    retailPrice: retailPrice
+  };
+}
+
 module.exports = (connection) => {
   class Product extends Model {
     static associate(models) {
 
-      /* Product many-to-many Item */
-      models.Product.belongsToMany(models.Item, {
-        through: 'ItemProduct'
+      /* Product one-to-many ItemProduct */
+      models.Product.hasMany(models.ItemProduct);
+      models.ItemProduct.belongsTo(models.Product, {
+        foreignKey: {
+          allowNull: false
+        }
       });
 
-      /* Product many-to-many Category */
-      models.Product.belongsToMany(models.ProductCategory, {
-        through: 'ProductCategoryProduct'
+      models.Product.belongsToMany(models.Item, { through: models.ItemProduct });
+      models.Item.belongsToMany(models.Product, { through: models.ItemProduct });
+
+      /* Product one-to-many ProductCategoryProduct */
+      models.Product.hasMany(models.ProductCategoryProduct);
+      models.ProductCategoryProduct.belongsTo(models.Product, {
+        foreignKey: {
+          allowNull: false
+        }
       });
 
-      /* Product many-to-many Tag */
-      models.Product.belongsToMany(models.ProductTag, {
-        through: 'ProductTagProduct'
+      /* Product one-to-many ProductTagProduct */
+      models.Product.hasMany(models.ProductTagProduct);
+      models.ProductTagProduct.belongsTo(models.Product, {
+        foreignKey: {
+          allowNull: false
+        }
       });
+
+      /* Product one-to-many Photo */
+      models.Product.hasMany(models.Photo);
+      models.Photo.belongsTo(models.Product);
     }
   }
 
@@ -43,23 +81,49 @@ module.exports = (connection) => {
       type: DataTypes.STRING
     },
     weight: {
-      type: DataTypes.FLOAT
-    },
-    retailPrice: {
-      type: DataTypes.FLOAT
-    },
-    salesPrice: {
-      type: DataTypes.FLOAT
+      type: DataTypes.VIRTUAL
     },
     minimumDiscount: {
-      type: DataTypes.FLOAT
+      type: DataTypes.VIRTUAL
+    },
+    salesPrice: {
+      type: DataTypes.VIRTUAL
+    },
+    retailPrice: {
+      type: DataTypes.VIRTUAL
     },
     active: {
       type: DataTypes.BOOLEAN
     }
   }, {
     sequelize: connection,
-    modelName: 'Product'
+    modelName: 'Product',
+    hooks: {
+      afterCreate: (product, options) => {
+        return product.getProductType().then(productType => {
+          return product.update({ code: productType.suffix + product.id.toString().padStart(6, 0) })
+        })
+      },
+      afterFind: async function(products) {
+        if(products.constructor === Array) {
+          for (var i = 0; i < products.length; i++) {
+            var virtuals = await calculateVirtualsFromItems(products[i]);
+            products[i].weight = virtuals.weight;
+            products[i].minimumDiscount = virtuals.minimumDiscount;
+            products[i].salesPrice = virtuals.salesPrice;
+            products[i].retailPrice = virtuals.retailPrice;
+          }
+        } else {
+            var virtuals = await calculateVirtualsFromItems(products);
+            products.weight = virtuals.weight;
+            products.minimumDiscount = virtuals.minimumDiscount;
+            products.salesPrice = virtuals.salesPrice;
+            products.retailPrice = virtuals.retailPrice;
+        }
+
+        return products;
+      }
+    }
   });
 
   return Product;

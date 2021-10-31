@@ -7,9 +7,12 @@ const config = require(path.join(__dirname, '..', 'config', 'config.json'))[env]
 class File   {
   upload(fileName) {
     return (req, res, next) => {
+
       if (req.files && Object.keys(req.files).length !== 0) {
+        console.log("received")
         file = req.files[fileName];
         uploadPath = config.path_to_photos + "photo.id" + req.body.id + "." + file.name;
+        console.log("moving: " + uploadPath)
         file.mv(uploadPath, (err) => {
           if (err) {
             return res.status(500).json({msg: "Unable to uplad photo."});
@@ -21,7 +24,6 @@ class File   {
       }
     }
   }
-
 }
 
 module.exports = () => {

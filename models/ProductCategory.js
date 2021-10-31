@@ -4,9 +4,12 @@ module.exports = (connection) => {
   class ProductCategory extends Model {
     static associate(models) {
 
-      /* ProductCategory many-to-many Product */
-      models.ProductCategory.belongsToMany(models.Product, {
-        through: 'ProductCategoryProduct'
+      /* ProductCategory one-to-many ProductCategoryProduct */
+      models.ProductCategory.hasMany(models.ProductCategoryProduct);
+      models.ProductCategoryProduct.belongsTo(models.ProductCategory, {
+        foreignKey: {
+          allowNull: false
+        }
       });
     }
   }

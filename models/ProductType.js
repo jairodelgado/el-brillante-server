@@ -6,7 +6,11 @@ module.exports = (connection) => {
 
       /* ProductType one-to-many Product */
       models.ProductType.hasMany(models.Product);
-      models.Product.belongsTo(models.ProductType);
+      models.Product.belongsTo(models.ProductType, {
+        foreignKey: {
+          allowNull: false
+        }
+      });
     }
   }
 
@@ -15,6 +19,15 @@ module.exports = (connection) => {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
+    },
+    suffix: {
+      type: DataTypes.STRING,
+      unique: true,
+      validate: {
+        notEmpty: true,
+        isAlpha: true,
+        len: [2-2]
+      }
     },
     type: {
       type: DataTypes.STRING,
