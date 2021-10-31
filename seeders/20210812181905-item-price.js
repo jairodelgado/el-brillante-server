@@ -9,7 +9,6 @@ module.exports = {
       salesPrice: 105.0,
       minimumDiscountPrice: 39.0,
       active: true,
-      ItemId: 3,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -19,7 +18,6 @@ module.exports = {
       salesPrice: 410.0,
       minimumDiscountPrice: 93.0,
       active: true,
-      ItemId: 1,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -29,7 +27,6 @@ module.exports = {
       salesPrice: 160.0,
       minimumDiscountPrice: 19.0,
       active: true,
-      ItemId: 1,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -39,7 +36,6 @@ module.exports = {
       salesPrice: 120.0,
       minimumDiscountPrice: 291.0,
       active: true,
-      ItemId: 2,
       createdAt: new Date(),
       updatedAt: new Date()
     }]);

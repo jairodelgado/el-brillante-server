@@ -28,6 +28,8 @@ module.exports = {
       webActiveDescription: 'Buy this golden ring',
       zeroPrice: false,
       active: true,
+      retailPrice: 455.99,
+      salesPrice: 122.99,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -56,6 +58,8 @@ module.exports = {
       webActiveDescription: 'Buy this silver ring',
       zeroPrice: false,
       active: true,
+      retailPrice: 710.99,
+      salesPrice: 165.99,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -84,6 +88,8 @@ module.exports = {
       webActiveDescription: 'Buy this golden chain',
       zeroPrice: false,
       active: true,
+      retailPrice: 110.99,
+      salesPrice: 145.99,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -112,6 +118,8 @@ module.exports = {
       webActiveDescription: 'Buy this golden earing',
       zeroPrice: false,
       active: true,
+      retailPrice: 140.99,
+      salesPrice: 151.99,
       createdAt: new Date(),
       updatedAt: new Date()
     }]);

@@ -4,6 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('ProductTypes', [{
       id: 1,
+      suffix: 'AA',
       type: 'Hand',
       description: 'Products to be used in the hands.',
       active: true,
@@ -11,6 +12,7 @@ module.exports = {
       updatedAt: new Date()
     }, {
       id: 2,
+      suffix: 'BB',
       type: 'Hair',
       description: 'Products to be used in the hair.',
       active: true,
@@ -18,6 +20,7 @@ module.exports = {
       updatedAt: new Date()
     }, {
       id: 3,
+      suffix: 'CC',
       type: 'Foot',
       description: 'Products to be used in the foots.',
       active: true,
@@ -25,6 +28,7 @@ module.exports = {
       updatedAt: new Date()
     }, {
       id: 4,
+      suffix: 'DD',
       type: 'Body',
       description: 'Products to be used in the body.',
       active: true,
