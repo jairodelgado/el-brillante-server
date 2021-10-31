@@ -6,7 +6,7 @@
     "host": "localhost",
     "dialect": "mysql",
     "logging": false,
-    "path_to_photos": "/home",
+    "uploadURL": "http://localhost:4000/uploads",
     "TOKEN_SECRET": "DUMMY_SECRET"
   },
   "test": {
@@ -16,7 +16,7 @@
     "host": "localhost",
     "dialect": "mysql",
     "logging": true,
-    "path_to_photos": "/home",
+    "uploadURL": "http://localhost:4000/uploads",
     "TOKEN_SECRET": "DUMMY_SECRET"
   },
   "production": {
@@ -26,7 +26,7 @@
     "host": "localhost",
     "dialect": "mysql",
     "logging": false,
-    "path_to_photos": "/home",
+    "uploadURL": "http://localhost:4000/uploads",
     "TOKEN_SECRET": "DUMMY_SECRET"
   }
 }
